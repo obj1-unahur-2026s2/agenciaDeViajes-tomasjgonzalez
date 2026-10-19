@@ -1,0 +1,41 @@
+import agenciaDeViajes.*
+
+describe "Tests de Pack Nacional" {
+    var coordinadorGuia
+    var beneficioNoVigente
+    var packNacional
+    var beneficioVigente1
+    var beneficioVigente2
+    var packNacional1
+    var coordinadorGuia2
+
+    method initilize(){
+        coordinadorGuia = new Coordinador(cantidadViajesRealizados=4, rol=guia, estaMotivado=true, aniosDeExperiencia=1)
+        beneficioNoVigente = new BeneficioEspecial(tipo="Traslados Privados", costo = 60, estaVigente = false)
+        packNacional = new Nacional(provinciaDestino = "Cordoba",actividades = ["Andar a caballo", "fabrica de fernet"],duracionDias=3,precioBase=700, coordinadorACargo = coordinadorGuia)
+
+        coordinadorGuia2 = new Coordinador(cantidadViajesRealizados=5, rol=guia, estaMotivado=true, aniosDeExperiencia=1)
+        beneficioVigente1 = new BeneficioEspecial(tipo="Traslados Privados", costo = 60, estaVigente = true)
+        beneficioVigente2 = new BeneficioEspecial(tipo="Seguros adicionale", costo = 120, estaVigente = true)
+        packNacional1 = new Nacional(provinciaDestino = "Cordoba",actividades = ["Andar a caballo"],duracionDias=4,precioBase=700, coordinadorACargo = coordinadorGuia2)
+    }
+
+    test "Un Pack Nacional sin beneficios vigentes devuelve el mismo precio base" {
+        assert.equals(packNacional.precioFinal(), 700)
+        packNacional.agregarBeneficio(beneficioNoVigente)
+        assert.equals(packNacional.precioFinal(), 700)
+    }
+
+    test "Un pack nacional con 2 beneficios vigentes suma correctamente sus costos al precio base."{
+        assert.equals(packNacional1.precioFinal(), 700)
+        packNacional1.agregarBeneficio(beneficioVigente1)
+        packNacional1.agregarBeneficio(beneficioVigente2)
+        assert.equals(packNacional1.precioFinal(), 880)
+    }
+
+    test "Un pack internacional sin beneficios vigentes calcula correctamente el total con el 20% de recargo."{
+        var packInternacional = new Internacional(duracionDias=5,precioBase=800, coordinadorACargo = coordinadorGuia2,paisDestino="Brasil",esDeInteres= false)
+        assert.equals(packInternacional.precioFinal(), 960)
+    }
+}
+
